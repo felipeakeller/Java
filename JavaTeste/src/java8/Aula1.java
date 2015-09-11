@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ClasseAnonima {
+public class Aula1 {
 
 	List<String> palavras = Arrays.asList("casa código","alura online", "caelum");
 	
