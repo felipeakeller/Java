@@ -4,42 +4,42 @@ import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
 import com.unisinos.dao.DaoManager;
-import com.unisinos.domain.AppInfoBuilder;
 import com.unisinos.domain.AppInfoDto;
-import com.unisinos.util.ExcelUtil;
+import com.unisinos.domain.AppInfoExtractor;
 import com.unisinos.util.FileManager;
+import com.unisinos.util.FileUtil;
 
 public class Main {
 	
 	public static void main(String[] args) {
 		
 		File folder = new File("C:\\Users\\Felipe\\Desktop\\TCC2\\bancos");
-		AppInfoBuilder builder = new AppInfoBuilder();
+		AppInfoExtractor builder = new AppInfoExtractor();
 				
 		List<AppInfoDto> result = new LinkedList<>();
 		
 		if(folder.canRead() && folder.isDirectory()) {
-			for (String bdName : folder.list()) {
+			for (String bdName : folder.list((dir, name) -> name.endsWith(".db")) ) {
 				String bdPath = "jdbc:sqlite:" + folder.getAbsolutePath() + "\\" + bdName;
 				DaoManager dao = DaoManager.getInstance().openConnection(bdPath);
-				
 				try {
 					ResultSet resultSet = dao.query(" select * from app_infos order by id ");
 					String userName = bdName.substring(0, bdName.indexOf("."));
 					result.addAll(builder.build(userName, resultSet));
+					System.out.println("DB: " + bdPath);
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 			}
 		}
 		
-		ExcelUtil excelUtil = new ExcelUtil();
-		List<HSSFWorkbook> resultWb = excelUtil.createXls(result);
+		FileUtil fileUtil = new FileUtil();
+		String resultCsv = fileUtil.createCSVData(result);
+		String resultArff = fileUtil.createArffData(result, "train");
 		
-		FileManager.writeFiles(resultWb, "C:\\Users\\Felipe\\Desktop\\TCC2\\bancos\\");
+		FileManager.writeFiles(resultCsv, "C:\\Users\\Felipe\\Desktop\\TCC2\\bancos\\train.csv");
+		FileManager.writeFiles(resultArff, "C:\\Users\\Felipe\\Desktop\\TCC2\\bancos\\train.arff");
 		
 		System.out.println("Arquivos criados");
 	}

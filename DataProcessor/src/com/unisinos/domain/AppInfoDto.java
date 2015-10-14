@@ -1,5 +1,7 @@
 package com.unisinos.domain;
 
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 public class AppInfoDto {
@@ -9,7 +11,7 @@ public class AppInfoDto {
 	private int seq;
 	private String processName;
 	private int dayOfWeek;
-
+	
 	private int hour;
 	private int minutes; 
 	private int seconds;
@@ -20,6 +22,8 @@ public class AppInfoDto {
 	
 	private String state;
 	private Date date;
+	private LocalDateTime localDateTime;
+	private GroupAppsFlow groupApps;
 
 	public String getUserName() {
 		return userName;
@@ -85,13 +89,13 @@ public class AppInfoDto {
 		return tx;
 	}
 	public void setTx(long tx) {
-		this.tx = tx;
+		this.tx = tx > 0 ? tx/1000 : tx;
 	}
 	public long getRx() {
 		return rx;
 	}
 	public void setRx(long rx) {
-		this.rx = rx;
+		this.rx = rx > 0 ? rx/1000 : rx;
 	}
 	public String getState() {
 		return state;
@@ -99,11 +103,50 @@ public class AppInfoDto {
 	public void setState(String state) {
 		this.state = state;
 	}
+	public int getAppsCount() {
+		return groupApps.count;
+	}
+	public int getAppsFlow() {
+		return groupApps.appsFlow.length();
+	}
 	
+	public boolean getIsWeekend() {
+		return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
+	}
+
 	public void updateSecondsOpen(AppInfoDto appInfoCloseDTO) {
 		Date dateClosed = appInfoCloseDTO.getDate();
 		long secondsOpen = (dateClosed.getTime() - getDate().getTime()) / 1000;
 		setOpenedTime(secondsOpen);
+	}
+
+	public void setLocalDateTime(int year, int month, int dayOfMonth, int hour) {
+		this.localDateTime = LocalDateTime.of(year, month, dayOfMonth, hour, 0);
+	}
+	public LocalDateTime getLocalDateTime() {
+		return localDateTime;
+	}
+	public void setGroupApps(GroupAppsFlow groupApps) {
+		this.groupApps = groupApps;
+	}
+	public GroupAppsFlow getGroupApps() {
+		return groupApps;
+	}
+	
+	public String getDayOfWeekStr() {
+		return String.valueOf(dayOfWeek);
+	}
+	public String getHourStr() {
+		return String.valueOf(hour);
+	}
+	public String getOpenedTimeStr() {
+		return String.valueOf(openedTime);
+	}
+	public String getIsWeekendStr() {
+		return Boolean.valueOf(getIsWeekend()).toString();
+	}
+	public String getIdScreenStr() {
+		return String.valueOf(idScreen);
 	}
 	
 }
