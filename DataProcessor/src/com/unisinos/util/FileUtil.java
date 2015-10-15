@@ -23,7 +23,7 @@ public class FileUtil {
 	
 	private void addColumns(AppInfoBuilder csvBuilder) {
 		csvBuilder.addColumn(col -> col.withHeader("processName").nominal().withExtractor(app -> app.getProcessName()) )
-			.addColumn(col -> col.withHeader("dayOfWeek").numeric().withExtractor(app -> app.getDayOfWeekStr()) )
+//			.addColumn(col -> col.withHeader("dayOfWeek").numeric().withExtractor(app -> app.getDayOfWeekStr()) )
 			.addColumn(col -> col.withHeader("hour").numeric().withExtractor(app -> app.getHourStr()) )
 			.addColumn(col -> col.withHeader("openedTime").numeric().withExtractor(app -> app.getOpenedTimeStr()) )
 			.addColumn(col -> col.withHeader("isWeekend").nominal().withExtractor(app -> app.getIsWeekendStr()) )
