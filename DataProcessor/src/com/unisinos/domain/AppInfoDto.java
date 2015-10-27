@@ -19,6 +19,8 @@ public class AppInfoDto {
 	private int idScreen;
 	private long tx;
 	private long rx;
+	private Date dtScreenStart;
+	private Date dtScreenStop;
 	
 	private String state;
 	private Date date;
@@ -88,13 +90,13 @@ public class AppInfoDto {
 	public long getTx() {
 		return tx;
 	}
-	public void setTx(long tx) {
+	public void setTxBytes(long tx) {
 		this.tx = tx > 0 ? tx/1000 : tx;
 	}
 	public long getRx() {
 		return rx;
 	}
-	public void setRx(long rx) {
+	public void setRxBytes(long rx) {
 		this.rx = rx > 0 ? rx/1000 : rx;
 	}
 	public String getState() {
@@ -114,8 +116,7 @@ public class AppInfoDto {
 		return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
 	}
 
-	public void updateSecondsOpen(AppInfoDto appInfoCloseDTO) {
-		Date dateClosed = appInfoCloseDTO.getDate();
+	public void updateSecondsOpen(Date dateClosed) {
 		long secondsOpen = (dateClosed.getTime() - getDate().getTime()) / 1000;
 		setOpenedTime(secondsOpen);
 	}
@@ -132,6 +133,18 @@ public class AppInfoDto {
 	public GroupAppsFlow getGroupApps() {
 		return groupApps;
 	}
+	public Date getDtScreenStop() {
+		return dtScreenStop;
+	}
+	public void setDtScreenStop(Date dtScreenStop) {
+		this.dtScreenStop = dtScreenStop;
+	}
+	public Date getDtScreenStart() {
+		return dtScreenStart;
+	}
+	public void setDtScreenStart(Date dtScreenStart) {
+		this.dtScreenStart = dtScreenStart;
+	}
 	
 	public String getDayOfWeekStr() {
 		return String.valueOf(dayOfWeek);
@@ -147,6 +160,20 @@ public class AppInfoDto {
 	}
 	public String getIdScreenStr() {
 		return String.valueOf(idScreen);
+	}
+	public void sumTxRx(AppInfoDto appInfoDTO) {
+		this.tx = getTx() + appInfoDTO.getTx();
+		this.rx = getRx() + appInfoDTO.getRx();
+	}
+	
+	public long timeScreenOn() {
+		return (dtScreenStop.getTime() - dtScreenStart.getTime()) / 1000;
+	}
+	public long timeScreenHour() {
+		return groupApps.timeScreenOn;
+	}
+	public String timeScreenHourStr() {
+		return String.valueOf(timeScreenHour());
 	}
 	
 }
