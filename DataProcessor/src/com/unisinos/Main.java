@@ -63,7 +63,7 @@ public class Main {
 		FileManager.writeFiles(testCsv, propertiesUtil.testFolder(), "test.csv");
 		FileManager.writeFiles(testArff, propertiesUtil.testFolder(), "test.arff");
 		
-		TestUserRandomSplit testUserRandomSplit = new TestUserRandomSplit(propertiesUtil);
+		TestUserRandomSplit testUserRandomSplit = new TestUserRandomSplit(trainList, propertiesUtil);
 		
 		Map<String, List<AppInfoDto>> testResultByHour = testUserRandomSplit.split(testList);
 		for (String nameFile : testResultByHour.keySet()) {

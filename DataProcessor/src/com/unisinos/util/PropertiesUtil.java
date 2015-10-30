@@ -22,6 +22,7 @@ public class PropertiesUtil {
 	private Boolean timeScreenHour;
 	
 	private int minimumTestSize;
+	private double percentRelation;
 	
 	public PropertiesUtil() {
 		try {
@@ -42,6 +43,7 @@ public class PropertiesUtil {
 			timeScreenHour = properties.getProperty("timeScreenHour").equals("true");
 			
 			minimumTestSize = Integer.valueOf(properties.getProperty("minimumTestSize"));
+			percentRelation = Double.valueOf(properties.getProperty("percentRelation"));
 			
 			AppsUtil.setFilterApps(properties.getProperty("filterApps").equals("true"));
 			AppsUtil.accepedtApps(properties.getProperty("accpetedApps"));
@@ -96,6 +98,9 @@ public class PropertiesUtil {
 	}
 	public int minimumTestSize() {
 		return minimumTestSize;
+	}
+	public double percentRelation() {
+		return percentRelation;
 	}
 	
 }

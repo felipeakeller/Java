@@ -11,10 +11,14 @@ import com.unisinos.util.PropertiesUtil;
 
 public class TestUserRandomSplit {
 
+	private List<AppInfoDto> trainList;
 	int minimumTestSize;
+	double percentRelation;
 	
-	public TestUserRandomSplit(PropertiesUtil propertiesUtil) {
+	public TestUserRandomSplit(List<AppInfoDto> trainList, PropertiesUtil propertiesUtil) {
+		this.trainList = trainList;
 		this.minimumTestSize = propertiesUtil.minimumTestSize();
+		this.percentRelation = propertiesUtil.percentRelation();
 	}
 
 	public Map<String, List<AppInfoDto>> split(List<AppInfoDto> testList) {
@@ -35,10 +39,13 @@ public class TestUserRandomSplit {
 				Map<Integer, List<AppInfoDto>> resultHours = new HashMap<>();
 				for (Integer hour : hours.keySet()) {
 					List<AppInfoDto> list = hours.get(hour);
-					if(list.size() > minimumTestSize) {
+					if(minimumTestSize == 0 || list.size() > minimumTestSize) {
 						resultHours.put(hour, list);
 					}
 				}
+				
+				resultHours = relationFilter(user, resultHours); 
+				
 				if(!resultHours.isEmpty()) {
 					Integer anyHour = StreamSupport.stream(resultHours.keySet().spliterator(), false).findAny().get();
 					result.put(user + "_" + (i + 1), resultHours.get(anyHour));
@@ -47,6 +54,26 @@ public class TestUserRandomSplit {
 		});
 		
 		return result;
+	}
+
+	private Map<Integer, List<AppInfoDto>> relationFilter(String user, Map<Integer, List<AppInfoDto>> resultHours) {
+		Map<Integer, List<AppInfoDto>> resultFiltered = new HashMap<>();
+		List<AppInfoDto> trainListByUser = trainList.stream().filter(t -> t.getUserName().equals(user))
+															 .collect(Collectors.toList());
+		resultHours.forEach((hour, list) -> {
+			long totalAppsHour = trainListByUser.stream()
+												.filter(t -> t.getHour() == hour)
+												.count();
+			long mediaAppsHour = totalAppsHour / 14;
+			
+			double maxValue = Math.max(mediaAppsHour, list.size());
+			double minValue = Math.min(mediaAppsHour, list.size());
+			
+			if( (((maxValue / minValue) * 100)-100) <= percentRelation ) {
+				resultFiltered.put(hour, list);
+			}
+		});
+		return resultFiltered;
 	}
 
 }
