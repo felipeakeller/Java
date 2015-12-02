@@ -21,6 +21,7 @@ public class PropertiesUtil {
 	private Boolean appsFlow;
 	private Boolean timeScreenHour;
 	
+	private int instancesOfTest;
 	private int minimumTestSize;
 	private double percentRelation;
 	
@@ -44,6 +45,7 @@ public class PropertiesUtil {
 			
 			minimumTestSize = Integer.valueOf(properties.getProperty("minimumTestSize"));
 			percentRelation = Double.valueOf(properties.getProperty("percentRelation"));
+			instancesOfTest = Integer.valueOf(properties.getProperty("instancesOfTest"));
 			
 			AppsUtil.setFilterApps(properties.getProperty("filterApps").equals("true"));
 			AppsUtil.accepedtApps(properties.getProperty("accpetedApps"));
@@ -101,6 +103,10 @@ public class PropertiesUtil {
 	}
 	public double percentRelation() {
 		return percentRelation;
+	}
+
+	public int instancesOfTest() {
+		return instancesOfTest;
 	}
 	
 }

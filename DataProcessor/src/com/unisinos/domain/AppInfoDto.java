@@ -26,6 +26,7 @@ public class AppInfoDto {
 	private Date date;
 	private LocalDateTime localDateTime;
 	private GroupAppsFlow groupApps;
+	private long timeScreenHour = 0;
 
 	public String getUserName() {
 		return userName;
@@ -169,8 +170,12 @@ public class AppInfoDto {
 	public long timeScreenOn() {
 		return (dtScreenStop.getTime() - dtScreenStart.getTime()) / 1000;
 	}
+	
+	public void setTimeScreenHour(long timeScreenHour) {
+		this.timeScreenHour = timeScreenHour;
+	}
 	public long timeScreenHour() {
-		return groupApps.timeScreenOn;
+		return timeScreenHour;
 	}
 	public String timeScreenHourStr() {
 		return String.valueOf(timeScreenHour());

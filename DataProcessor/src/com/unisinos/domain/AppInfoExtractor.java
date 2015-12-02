@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.unisinos.Log;
 import com.unisinos.util.AppsUtil;
@@ -57,13 +58,29 @@ public class AppInfoExtractor {
 		}
 
 		updateTotalColumns(appInfoResult);
+		refreshTimeScreen(appInfoResult);
 		
 		return appInfoResult;
 	}
 	
+	private void refreshTimeScreen(List<AppInfoDto> appInfoResult) {
+		Map<LocalDateTime, List<AppInfoDto>> groupedByHour = appInfoResult.stream().collect(Collectors.groupingBy(AppInfoDto::getLocalDateTime));
+		groupedByHour.values().forEach(group -> {
+			long totalOpenedTimeProcesses = group.stream().mapToLong(app -> app.getOpenedTime()).sum();
+			long timeScreenHour = group.stream().findAny().get().getGroupApps().timeScreenOn;
+			if(timeScreenHour > 0 && ( (totalOpenedTimeProcesses*100) / timeScreenHour ) < 50) {
+				group.forEach(app -> app.setTimeScreenHour(totalOpenedTimeProcesses));
+			} else {
+				group.forEach(app -> app.setTimeScreenHour(timeScreenHour));
+			}
+		});
+	}
+
 	private void addToList(AppInfoDto appOpened, String userName, Consumer<AppInfoDto> addToListConsumer) {
 		appOpened.setUserName(userName);
-		if(appOpened.getOpenedTime() >= 0 && appOpened.getOpenedTime() < 3600) {
+		if(appOpened.getOpenedTime() >= 0 && appOpened.getOpenedTime() < 3600
+				&& appOpened.getRx() < 100000
+				&& appOpened.getTx() < 10000) {
 			addToListConsumer.accept(appOpened);
 		}
 	}

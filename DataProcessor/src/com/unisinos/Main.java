@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.unisinos.dao.DaoManager;
 import com.unisinos.domain.AppInfoDto;
@@ -52,14 +54,15 @@ public class Main {
 			}
 		}
 		
+		List<AppInfoDto> allResults = Stream.concat(trainList.stream(), testList.stream()).collect(Collectors.toList());
 		FileUtil fileUtil = new FileUtil(propertiesUtil);		
 		String resultCsv = fileUtil.createCSVData(trainList);
-		String resultArff = fileUtil.createArffData(trainList, "train");
+		String resultArff = fileUtil.createArffData(trainList, allResults, "train");
 		FileManager.writeFiles(resultCsv, propertiesUtil.trainFolder(), "train.csv");
 		FileManager.writeFiles(resultArff, propertiesUtil.trainFolder(), "train.arff");
 		
 		String testCsv = fileUtil.createCSVData(testList);
-		String testArff = fileUtil.createArffData(testList, "test");
+		String testArff = fileUtil.createArffData(testList, allResults, "test");
 		FileManager.writeFiles(testCsv, propertiesUtil.testFolder(), "test.csv");
 		FileManager.writeFiles(testArff, propertiesUtil.testFolder(), "test.arff");
 		
@@ -67,7 +70,7 @@ public class Main {
 		
 		Map<String, List<AppInfoDto>> testResultByHour = testUserRandomSplit.split(testList);
 		for (String nameFile : testResultByHour.keySet()) {
-			String arrfDataTest = fileUtil.createArffData(testResultByHour.get(nameFile), trainList, nameFile);
+			String arrfDataTest = fileUtil.createArffData(testResultByHour.get(nameFile), allResults, nameFile);
 			FileManager.writeFiles(arrfDataTest, propertiesUtil.testFolder(), nameFile +".arff");
 		}
 		
